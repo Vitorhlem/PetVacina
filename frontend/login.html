@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - PetCare Plus</title>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Open Sans', sans-serif; }
+        body {
+            background: linear-gradient(135deg, #F0F9FF 0%, #E0F2FE 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #334155;
+        }
+        .login-container {
+            background: white;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            animation: slideUp 0.5s ease-out;
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .login-container img { width: 80px; margin-bottom: 20px; }
+        h1 { font-size: 1.5rem; margin-bottom: 10px; color: #0F766E; }
+        p.subtitle { color: #64748B; margin-bottom: 30px; font-size: 0.9rem; }
+        
+        .form-group { margin-bottom: 20px; text-align: left; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.9rem; }
+        .form-group input {
+            width: 100%; padding: 12px; border: 1px solid #CBD5E1; border-radius: 8px; font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        .form-group input:focus { outline: none; border-color: #14B8A6; box-shadow: 0 0 0 3px rgba(20,184,166,0.2); }
+        
+        .btn-primary {
+            width: 100%; padding: 14px; background: #14B8A6; color: white; border: none; border-radius: 8px;
+            font-size: 1rem; font-weight: 600; cursor: pointer; transition: 0.3s;
+        }
+        .btn-primary:hover { background: #0F766E; }
+        
+        .toggle-link {
+            margin-top: 20px; display: block; color: #14B8A6; cursor: pointer; text-decoration: none; font-weight: 600;
+        }
+        .toggle-link:hover { text-decoration: underline; }
+        
+        /* Oculta os campos de registro inicialmente */
+        #register-fields { display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="login-container">
+        <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#14B8A6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 10px;"><path d="M12 2C7.58 2 4 5.58 4 10c0 4.42 8 12 8 12s8-7.58 8-12c0-4.42-3.58-8-8-8z"/><path d="M12 12a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/></svg>
+        
+        <h1 id="form-title">Acessar PetCare Plus</h1>
+        <p class="subtitle" id="form-subtitle">Gerencie a saúde do seu melhor amigo.</p>
+
+        <form id="auth-form">
+            <div id="register-fields">
+                <div class="form-group">
+                    <label for="nome">Nome Completo</label>
+                    <input type="text" id="nome" placeholder="Seu nome">
+                </div>
+                <div class="form-group">
+                    <label for="tipo">Eu sou um(a)...</label>
+                    <select id="tipo" style="width: 100%; padding: 12px; border: 1px solid #CBD5E1; border-radius: 8px; font-size: 1rem;">
+                        <option value="tutor">Tutor de Pet</option>
+                        <option value="veterinario">Veterinário(a)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="email">E-mail</label>
+                <input type="email" id="email" placeholder="seu@email.com" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="senha">Senha</label>
+                <input type="password" id="senha" placeholder="••••••••" required>
+            </div>
+
+            <button type="submit" class="btn-primary" id="submit-btn">Entrar</button>
+        </form>
+
+        <a class="toggle-link" id="toggle-btn" onclick="toggleMode()">Ainda não tem conta? Cadastre-se</a>
+    </div>
+
+    <script>
+        if (localStorage.getItem('petcareplus_user_id')) {
+            window.location.replace('index.html');
+        }
+
+        let isLogin = true;
+        const API_URL = 'http://127.0.0.1:8000';
+
+        function toggleMode() {
+            isLogin = !isLogin;
+            const title = document.getElementById('form-title');
+            const submitBtn = document.getElementById('submit-btn');
+            const toggleBtn = document.getElementById('toggle-btn');
+            const registerFields = document.getElementById('register-fields');
+            const nomeInput = document.getElementById('nome');
+
+            if (isLogin) {
+                title.innerText = 'Acessar PetCare Plus';
+                submitBtn.innerText = 'Entrar';
+                toggleBtn.innerText = 'Ainda não tem conta? Cadastre-se';
+                registerFields.style.display = 'none';
+                nomeInput.required = false;
+            } else {
+                title.innerText = 'Criar Conta';
+                submitBtn.innerText = 'Cadastrar';
+                toggleBtn.innerText = 'Já possui conta? Faça login';
+                registerFields.style.display = 'block';
+                nomeInput.required = true;
+            }
+        }
+
+        document.getElementById('auth-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const senha = document.getElementById('senha').value;
+            const nome = document.getElementById('nome').value;
+            const tipo = document.getElementById('tipo').value;
+
+            try {
+                if (!isLogin) {
+                    // MODO CADASTRO
+                    const response = await fetch(`${API_URL}/usuarios/`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ nome, email, senha, tipo })
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        localStorage.setItem('petcareplus_user_id', data.id);
+                        localStorage.setItem('petcareplus_user_tipo', data.tipo);
+                        localStorage.setItem('petcareplus_visited', 'true'); // Pula a tela de "Bem-vindo"
+                        
+                        // O 'replace' não deixa a tela de login salva no histórico da seta
+                        window.location.replace('index.html'); 
+                    } else {
+                        alert('Erro ao criar conta: Verifique os dados ou e-mail já existente.');
+                    }
+                } else {
+                    // MODO LOGIN REAL
+                    const response = await fetch(`${API_URL}/login/`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email, senha })
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        localStorage.setItem('petcareplus_user_id', data.id);
+                        localStorage.setItem('petcareplus_user_tipo', data.tipo);
+                        localStorage.setItem('petcareplus_visited', 'true'); // Pula a tela de "Bem-vindo"
+                        
+                        window.location.replace('index.html'); 
+                    } else {
+                        alert('E-mail ou senha incorretos.');
+                    }
+                }
+            } catch (error) {
+                alert('Erro de conexão com o Servidor Python. Verifique se a API está rodando.');
+                console.error(error);
+            }
+        });
+    </script>
+</body>
+</html>

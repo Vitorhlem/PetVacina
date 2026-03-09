@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>PetCare Plus</title>
+    <meta name="description" content="A caderneta de saúde digital completa para o seu pet. Vacinas, consultas, peso e muito mais.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/main.css">
+    
+    <style>
+        /* Cores Vibrantes e Animações */
+        :root {
+            --primary-gradient: linear-gradient(135deg, #14B8A6 0%, #0F766E 100%);
+            --card-hover-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        .header {
+            background: var(--primary-gradient);
+            color: white;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+        }
+        .header h1, .header .btn-icon { color: white; }
+        .header .btn-icon:hover { background-color: rgba(255,255,255,0.2); }
+
+        /* Barra de Busca */
+        .search-container {
+            padding: 1rem;
+            background-color: var(--white);
+            border-bottom: 1px solid var(--light-gray);
+            position: sticky;
+            top: 60px; /* Logo abaixo do header */
+            z-index: 9;
+        }
+        .search-input {
+            width: 100%;
+            padding: 12px 16px 12px 40px;
+            border-radius: 20px;
+            border: 1px solid var(--light-gray);
+            background: #f1f5f9 url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="%2364748B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>') no-repeat 12px center;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.2);
+            background-color: white;
+        }
+
+        /* Animações e Hover nos Cards */
+        .pet-card {
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid transparent;
+        }
+        .pet-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--card-hover-shadow);
+            border-color: var(--primary-color);
+        }
+        .reminder-card {
+            border-left: 5px solid var(--warning-color);
+            background: linear-gradient(to right, #fffbeb, #ffffff);
+        }
+
+        /* Status Pills */
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            background-color: #d1fae5;
+            color: #065f46;
+            margin-top: 4px;
+        }
+
+        /* FadeIn Suave para as páginas */
+        .page { animation: fadeSlideUp 0.4s ease-out forwards; }
+        @keyframes fadeSlideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <section id="welcome-page" class="page active" aria-labelledby="welcome-title">
+        <div class="welcome-content">
+            <img src="assets/logo.svg" alt="Logo PetCare Plus" class="logo">
+            <h1 id="welcome-title">Bem-vindo ao PetCare Plus</h1>
+            <p>A saúde e o bem-estar do seu pet, na palma da sua mão.</p>
+            <button id="start-app-btn" class="btn btn-primary" style="padding: 16px 32px; font-size: 1.1rem; border-radius: 30px; box-shadow: 0 4px 15px rgba(20, 184, 166, 0.4);">Entrar no App</button>
+        </div>
+    </section>
+
+    <section id="dashboard-page" class="page" aria-labelledby="dashboard-title">
+        <header class="header">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C7.58 2 4 5.58 4 10c0 4.42 8 12 8 12s8-7.58 8-12c0-4.42-3.58-8-8-8z"/><path d="M12 12a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/></svg>
+                <h1 id="dashboard-title">Meus Pets</h1>
+            </div>
+            <div>
+                <button id="logout-btn" class="btn-icon" aria-label="Sair" onclick="localStorage.removeItem('petcareplus_user_id'); localStorage.removeItem('petcareplus_user_tipo'); window.location.href='login.html'">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                </button>
+                <button id="settings-btn" class="btn-icon" aria-label="Abrir Configurações">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                </button>
+                <button id="add-pet-btn-dashboard" class="btn-icon" aria-label="Adicionar novo pet" style="background: rgba(255,255,255,0.2); border-radius: 50%;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                </button>
+            </div>
+        </header>
+
+        <div class="search-container">
+            <input type="text" id="search-pet-input" class="search-input" placeholder="Buscar por nome ou espécie..." onkeyup="filterPets()">
+        </div>
+
+        <main class="dashboard-main">
+            <div id="reminders-section" class="reminders-container">
+                <h2 style="display: flex; align-items: center; gap: 8px;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--warning-color)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+                    Próximos Lembretes
+                </h2>
+                <div id="reminders-list"></div>
+            </div>
+            
+            <h2 style="display: flex; align-items: center; justify-content: space-between;">
+                Seus Companheiros
+                <span id="pet-count" class="status-badge" style="background: var(--light-gray); color: var(--text-color)">0 Pets</span>
+            </h2>
+            <div id="pet-list" class="pet-list-container"></div>
+        </main>
+    </section>
+
+    <section id="pet-form-page" class="page" aria-labelledby="form-title">
+        <header class="header">
+            <button class="back-btn" data-target="dashboard-page" aria-label="Voltar para a lista de pets">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            </button>
+            <h1 id="form-title">Adicionar Pet</h1>
+            <div style="width: 24px;"></div> </header>
+        <main>
+            <form id="pet-form" class="form-container" novalidate>
+                <input type="hidden" id="pet-id">
+                <div class="form-group photo-upload">
+                    <img id="pet-photo-preview" src="assets/placeholder.svg" alt="Pré-visualização da foto do pet." style="box-shadow: 0 4px 10px rgba(0,0,0,0.1); transition: 0.3s;">
+                    <input type="file" id="pet-photo" accept="image/*" class="hidden-file-input" aria-label="Escolher foto do pet">
+                    <div style="display: flex; gap: 10px;">
+                        <button type="button" id="select-photo-btn" class="btn btn-secondary" style="border-radius: 20px;">📷 Escolher Foto</button>
+                        <button type="button" id="remove-photo-btn" class="btn btn-danger" style="border-radius: 20px; display: none;">🗑️ Remover</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="pet-name">Nome *</label>
+                    <input type="text" id="pet-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="pet-species">Espécie *</label>
+                    <input type="text" id="pet-species" placeholder="Ex: Cão, Gato" required>
+                </div>
+                 <div class="form-group">
+                    <label for="pet-microchip">Nº do Microchip</label>
+                    <input type="text" id="pet-microchip" placeholder="Opcional">
+                </div>
+                <div class="form-group">
+                    <label for="pet-breed">Raça</label>
+                    <input type="text" id="pet-breed" placeholder="Ex: Labrador, Siamês">
+                </div>
+                <div class="form-group">
+                    <label for="pet-birthdate">Data de Nascimento</label>
+                    <input type="date" id="pet-birthdate">
+                </div>
+                <div class="form-group">
+                    <label for="pet-sex">Sexo</label>
+                    <select id="pet-sex">
+                        <option value="Macho">Macho</option>
+                        <option value="Fêmea">Fêmea</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block" style="border-radius: 8px; font-size: 1.1rem; margin-top: 10px;">💾 Salvar Pet</button>
+            </form>
+        </main>
+    </section>
+
+    <section id="pet-details-page" class="page" aria-labelledby="details-pet-name">
+        <header class="header">
+            <button class="back-btn" data-target="dashboard-page" aria-label="Voltar para a lista de pets">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            </button>
+            <h1 id="details-pet-name">Detalhes</h1>
+            <div style="width: 24px;"></div>
+        </header>
+        <main class="details-main-container">
+            <div id="details-content"></div>
+            
+            <div class="tabs-container">
+                <div class="tabs-nav">
+                    <button class="tab-link active" data-tab="tab-vaccines" role="tab" aria-controls="tab-vaccines" aria-selected="true">Vacinas</button>
+                    <button class="tab-link" data-tab="tab-parasites" role="tab" aria-controls="tab-parasites" aria-selected="false">Parasitas</button>
+                    <button class="tab-link" data-tab="tab-consults" role="tab" aria-controls="tab-consults" aria-selected="false">Consultas</button>
+                    <button class="tab-link" data-tab="tab-weight" role="tab" aria-controls="tab-weight" aria-selected="false">Peso</button>
+                </div>
+                
+                <div id="tab-vaccines" class="tab-content active" role="tabpanel">
+                    <div id="vaccine-list" class="record-list"></div>
+                    <button class="btn btn-primary btn-block add-record-btn" data-type="vaccine">+ Nova Vacina</button>
+                </div>
+                <div id="tab-parasites" class="tab-content" role="tabpanel">
+                     <div id="parasite-list" class="record-list"></div>
+                    <button class="btn btn-primary btn-block add-record-btn" data-type="parasite">+ Novo Controle</button>
+                </div>
+                <div id="tab-consults" class="tab-content" role="tabpanel">
+                    <div id="consult-list" class="record-list"></div>
+                    <button class="btn btn-primary btn-block add-record-btn" data-type="consult">+ Nova Consulta</button>
+                </div>
+                <div id="tab-weight" class="tab-content" role="tabpanel">
+                    <div id="weight-list" class="record-list"></div>
+                    <button class="btn btn-primary btn-block add-record-btn" data-type="weight">+ Novo Peso</button>
+                </div>
+            </div>
+        </main>
+    </section>
+
+    <section id="settings-page" class="page" aria-labelledby="settings-title">
+        <header class="header">
+            <button class="back-btn" data-target="dashboard-page" aria-label="Voltar para a lista de pets">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            </button>
+            <h1 id="settings-title">Configurações</h1>
+            <div style="width: 24px;"></div>
+        </header>
+        <main class="settings-main">
+            <div class="settings-section">
+                <h2>Contatos de Emergência</h2>
+                <form id="contacts-form">
+                    <div class="form-group">
+                        <label for="contact-vet">Veterinário(a) Principal</label>
+                        <input type="text" id="contact-vet" placeholder="(16) 99999-9999">
+                    </div>
+                    <div class="form-group">
+                        <label for="contact-emergency">Hospital 24h</label>
+                        <input type="text" id="contact-emergency" placeholder="(16) 98888-8888">
+                    </div>
+                    <button type="submit" class="btn btn-secondary">Salvar Contatos</button>
+                </form>
+            </div>
+            
+            <div class="settings-section">
+                <h2>Gerenciamento de Dados</h2>
+                <p style="margin-bottom: 1rem; color: var(--text-light); font-size: 0.95rem;">Faça backup dos seus dados ou importe um arquivo salvo para sua conta.</p>
+                <div class="data-actions" style="display: flex; gap: 10px;">
+                    <button id="export-data-btn" class="btn btn-primary">Exportar Dados</button>
+                    <button id="import-data-btn" class="btn btn-secondary">Importar Dados</button>
+                    <input type="file" id="import-file-input" class="hidden-file-input" accept=".json">
+                </div>
+            </div>
+
+        </main>
+    </section>
+
+    <div id="record-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <div class="modal-content">
+            <h2 id="modal-title">Adicionar Registro</h2>
+            <form id="record-form">
+                <input type="hidden" id="record-id">
+                <input type="hidden" id="record-type">
+                
+                <div class="form-group">
+                    <label for="record-name">Nome / Motivo / Produto *</label>
+                    <input type="text" id="record-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="record-date">Data *</label>
+                    <input type="date" id="record-date" required>
+                </div>
+                <div class="form-group" data-field="next-date">
+                    <label for="record-next-date">Próxima Aplicação</label>
+                    <input type="date" id="record-next-date">
+                </div>
+                <div class="form-group" data-field="vet">
+                    <label for="record-vet">Veterinário/Clínica</label>
+                    <input type="text" id="record-vet">
+                </div>
+                <div class="form-group" data-field="weight">
+                     <label for="record-weight">Peso (kg)</label>
+                    <input type="number" id="record-weight" step="0.1" placeholder="Ex: 5.2">
+                </div>
+                <div class="form-group" data-field="notes">
+                    <label for="record-notes">Anotações</label>
+                    <textarea id="record-notes" rows="3"></textarea>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" id="cancel-modal-btn" class="btn btn-secondary">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="accessibility-widget">
+        <button id="accessibility-btn" class="fab" aria-label="Abrir configurações de acessibilidade" aria-expanded="false" aria-controls="accessibility-panel">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-accessible" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><circle cx="12" cy="12" r="9"></circle><path d="M10 16.5l2 -3l2 3m-2 -3v-2l3 -1m-6 0l3 1"></path><circle cx="12" cy="7.5" r=".5" fill="currentColor"></circle></svg>
+        </button>
+        <div id="accessibility-panel" class="panel" role="region" aria-hidden="true">
+            <h3>Acessibilidade</h3>
+            <div class="option">
+                <label for="toggle-contrast">Alto Contraste</label>
+                <button role="switch" aria-checked="false" id="toggle-contrast" class="switch-btn"><span></span></button>
+            </div>
+            <div class="option">
+                <label for="toggle-large-text">Aumentar Texto</label>
+                <button role="switch" aria-checked="false" id="toggle-large-text" class="switch-btn"><span></span></button>
+            </div>
+            <div class="option">
+                <label for="toggle-dyslexia-font">Fonte Amigável</label>
+                <button role="switch" aria-checked="false" id="toggle-dyslexia-font" class="switch-btn"><span></span></button>
+            </div>
+            <div class="option">
+                <label for="toggle-highlight-links">Destacar Links</label>
+                <button role="switch" aria-checked="false" id="toggle-highlight-links" class="switch-btn"><span></span></button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function filterPets() {
+            const input = document.getElementById('search-pet-input').value.toLowerCase();
+            const cards = document.getElementsByClassName('pet-card');
+            
+            for (let i = 0; i < cards.length; i++) {
+                const name = cards[i].querySelector('h3').innerText.toLowerCase();
+                const species = cards[i].querySelector('p').innerText.toLowerCase();
+                
+                if (name.includes(input) || species.includes(input)) {
+                    cards[i].style.display = "flex";
+                } else {
+                    cards[i].style.display = "none";
+                }
+            }
+        }
+    </script>
+    <script src="scripts/app.js"></script>
+</body>
+</html>
