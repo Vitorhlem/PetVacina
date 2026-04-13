@@ -98,16 +98,17 @@
 
     <section id="dashboard-page" class="page" aria-labelledby="dashboard-title">
         <header class="header">
-            <div style="display: flex; align-items: center; gap: 10px;">
-                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C7.58 2 4 5.58 4 10c0 4.42 8 12 8 12s8-7.58 8-12c0-4.42-3.58-8-8-8z"/><path d="M12 12a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/></svg>
-                <h1 id="dashboard-title">Meus Pets</h1>
-            </div>
-            <div>
-                <button id="logout-btn" class="btn-icon" aria-label="Sair" onclick="localStorage.removeItem('petcareplus_user_id'); localStorage.removeItem('petcareplus_user_tipo'); window.location.href='login.html'">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <button id="notification-btn" class="btn-icon" aria-label="Notificações" style="position: relative;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+                    <span id="notification-badge" style="display: none; position: absolute; top: 6px; right: 8px; width: 10px; height: 10px; background-color: var(--danger-color); border-radius: 50%; border: 2px solid var(--primary-gradient);"></span>
                 </button>
+
                 <button id="settings-btn" class="btn-icon" aria-label="Abrir Configurações">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                </button>
+                <button id="logout-btn" class="btn-icon" aria-label="Sair" onclick="localStorage.removeItem('petcareplus_user_id'); localStorage.removeItem('petcareplus_user_tipo'); window.location.href='login.html'">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
                 </button>
                 <button id="add-pet-btn-dashboard" class="btn-icon" aria-label="Adicionar novo pet" style="background: rgba(255,255,255,0.2); border-radius: 50%;">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
@@ -133,6 +134,32 @@
                 <span id="pet-count" class="status-badge" style="background: var(--light-gray); color: var(--text-color)">0 Pets</span>
             </h2>
             <div id="pet-list" class="pet-list-container"></div>
+        </main>
+    </section>
+
+    <section id="vet-dashboard-page" class="page" aria-labelledby="vet-dashboard-title">
+        <header class="header" style="background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%);">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                <h1 id="vet-dashboard-title">Portal Clínico</h1>
+            </div>
+            <div>
+                <button class="btn-icon" aria-label="Sair" onclick="localStorage.removeItem('petcareplus_user_id'); localStorage.removeItem('petcareplus_user_tipo'); window.location.href='login.html'">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                </button>
+            </div>
+        </header>
+
+        <div class="search-container">
+            <input type="text" id="search-vet-input" class="search-input" placeholder="Buscar paciente por nome, espécie ou microchip..." onkeyup="filterVetPets()">
+        </div>
+
+        <main class="dashboard-main">
+            <h2 style="display: flex; align-items: center; justify-content: space-between;">
+                Pacientes Registrados
+                <span id="vet-pet-count" class="status-badge" style="background: #e0f2fe; color: #0369a1;">0 Pacientes</span>
+            </h2>
+            <div id="vet-pet-list" class="pet-list-container"></div>
         </main>
     </section>
 
@@ -203,6 +230,7 @@
                     <button class="tab-link" data-tab="tab-parasites" role="tab" aria-controls="tab-parasites" aria-selected="false">Parasitas</button>
                     <button class="tab-link" data-tab="tab-consults" role="tab" aria-controls="tab-consults" aria-selected="false">Consultas</button>
                     <button class="tab-link" data-tab="tab-weight" role="tab" aria-controls="tab-weight" aria-selected="false">Peso</button>
+                    <button class="tab-link" data-tab="tab-docs" role="tab" aria-controls="tab-docs" aria-selected="false">Doc. Médicos</button>
                 </div>
                 
                 <div id="tab-vaccines" class="tab-content active" role="tabpanel">
@@ -220,6 +248,13 @@
                 <div id="tab-weight" class="tab-content" role="tabpanel">
                     <div id="weight-list" class="record-list"></div>
                     <button class="btn btn-primary btn-block add-record-btn" data-type="weight">+ Novo Peso</button>
+                </div>
+                <div id="tab-docs" class="tab-content" role="tabpanel">
+                    <div id="doc-list" class="record-list"></div>
+                    <button id="btn-emitir-doc" class="btn btn-primary btn-block" style="display: none; background: var(--primary-dark); margin-top: 10px;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px; vertical-align: middle;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                        Emitir Prescrição / Atestado
+                    </button>
                 </div>
             </div>
         </main>
@@ -301,6 +336,42 @@
             </form>
         </div>
     </div>
+
+    <div id="doc-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="doc-modal-title">
+        <div class="modal-content" style="max-width: 500px;">
+            <h2 id="doc-modal-title" style="color: var(--primary-dark); display: flex; align-items: center; gap: 8px;">
+                👩‍⚕️ Área Médica
+            </h2>
+            <p style="color: var(--text-light); margin-bottom: 20px; font-size: 0.9rem;">Emita documentos oficiais que ficarão salvos diretamente na conta do tutor.</p>
+            <form id="doc-form">
+                <div class="form-group">
+                    <label for="doc-type">Tipo de Documento *</label>
+                    <select id="doc-type" required>
+                        <option value="Receituário">Receituário (Remédios e Tratamentos)</option>
+                        <option value="Atestado">Atestado Médico / Cirúrgico</option>
+                        <option value="Encaminhamento">Encaminhamento para Exames</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="doc-date">Data da Emissão *</label>
+                    <input type="date" id="doc-date" required>
+                </div>
+                <div class="form-group">
+                    <label for="doc-vet-name">Veterinário Responsável *</label>
+                    <input type="text" id="doc-vet-name" required placeholder="Ex: Dr(a). João Silva (CRMV 1234)">
+                </div>
+                <div class="form-group">
+                    <label for="doc-content">Corpo do Documento *</label>
+                    <textarea id="doc-content" rows="6" required placeholder="Descreva os medicamentos, dosagens, recomendações pós-cirúrgicas ou anotações clínicas..." style="font-family: monospace;"></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" id="cancel-doc-btn" class="btn btn-secondary">Cancelar</button>
+                    <button type="submit" class="btn btn-primary" style="background: var(--primary-dark);">Emitir e Enviar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <div class="accessibility-widget">
         <button id="accessibility-btn" class="fab" aria-label="Abrir configurações de acessibilidade" aria-expanded="false" aria-controls="accessibility-panel">
             <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-accessible" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><circle cx="12" cy="12" r="9"></circle><path d="M10 16.5l2 -3l2 3m-2 -3v-2l3 -1m-6 0l3 1"></path><circle cx="12" cy="7.5" r=".5" fill="currentColor"></circle></svg>
@@ -327,6 +398,22 @@
     </div>
 
     <script>
+
+        function filterVetPets() {
+            const input = document.getElementById('search-vet-input').value.toLowerCase();
+            const cards = document.getElementById('vet-pet-list').getElementsByClassName('pet-card');
+            
+            for (let i = 0; i < cards.length; i++) {
+                // Busca em todo o texto do card (nome, espécie e microchip)
+                const text = cards[i].innerText.toLowerCase(); 
+                if (text.includes(input)) {
+                    cards[i].style.display = "flex";
+                } else {
+                    cards[i].style.display = "none";
+                }
+            }
+        }
+        
         function filterPets() {
             const input = document.getElementById('search-pet-input').value.toLowerCase();
             const cards = document.getElementsByClassName('pet-card');

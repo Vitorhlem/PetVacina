@@ -1,7 +1,7 @@
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import FastAPI, Depends, HTTPException, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
-from typing import List
+from typing import Dict, List
 from sqlalchemy.exc import IntegrityError
 import models
 import schemas
@@ -69,15 +69,21 @@ def buscar_pet_por_microchip(microchip: str, db: Session = Depends(get_db)):
 
 # --- ROTAS DE REGISTROS (Ação do Veterinário/Tutor) ---
 @app.post("/pets/{pet_id}/registros/", response_model=schemas.RegistroResponse)
-def criar_registro_para_pet(pet_id: int, registro: schemas.RegistroCreate, db: Session = Depends(get_db)):
+async def criar_registro_para_pet(pet_id: int, registro: schemas.RegistroCreate, db: Session = Depends(get_db)):
     db_pet = db.query(models.Pet).filter(models.Pet.id == pet_id).first()
     if db_pet is None:
         raise HTTPException(status_code=404, detail="Pet não encontrado")
-
+    
     db_registro = models.Registro(**registro.model_dump(), pet_id=pet_id)
     db.add(db_registro)
     db.commit()
     db.refresh(db_registro)
+    
+    # === A MÁGICA ACONTECE AQUI ===
+    # Envia o aviso diretamente para o ID do Tutor dono do Pet!
+    mensagem = f"Novo registro adicionado para {db_pet.nome}: {registro.nome}"
+    await manager.send_personal_message(mensagem, db_pet.tutor_id)
+    
     return db_registro
 @app.get("/usuarios/{tutor_id}/pets/", response_model=List[schemas.PetResponse])
 def listar_pets_do_tutor(tutor_id: int, db: Session = Depends(get_db)):
@@ -145,3 +151,34 @@ def login(usuario: schemas.UsuarioLogin, db: Session = Depends(get_db)):
 def listar_todos_os_pets(db: Session = Depends(get_db)):
     pets = db.query(models.Pet).all()
     return pets
+
+class ConnectionManager:
+    def __init__(self):
+        # Guarda quem está logado. Formato: {id_do_usuario: [conexao1, conexao2]}
+        self.active_connections: Dict[int, List[WebSocket]] = {}
+
+    async def connect(self, websocket: WebSocket, user_id: int):
+        await websocket.accept()
+        if user_id not in self.active_connections:
+            self.active_connections[user_id] = []
+        self.active_connections[user_id].append(websocket)
+
+    def disconnect(self, websocket: WebSocket, user_id: int):
+        if user_id in self.active_connections:
+            self.active_connections[user_id].remove(websocket)
+
+    async def send_personal_message(self, message: str, user_id: int):
+        if user_id in self.active_connections:
+            for connection in self.active_connections[user_id]:
+                await connection.send_text(message)
+
+manager = ConnectionManager()
+
+@app.websocket("/ws/{user_id}")
+async def websocket_endpoint(websocket: WebSocket, user_id: int):
+    await manager.connect(websocket, user_id)
+    try:
+        while True:
+            data = await websocket.receive_text() # Mantém a conexão aberta escutando
+    except WebSocketDisconnect:
+        manager.disconnect(websocket, user_id)
