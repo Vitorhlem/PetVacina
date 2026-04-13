@@ -1,8 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
 
     // --- AUTENTICAÇÃO E INTEGRAÇÃO COM A API ---
-    const API_URL = 'https://SUA-API.onrender.com'; // <-- COLOQUE O LINK DO WEB SERVICE DO RENDER AQUI
-    
+    const API_URL = 'https://petcare-api-backend.onrender.com';    
     // Pega o ID e o Tipo do usuário real logado
     const loggedUserId = localStorage.getItem('petcareplus_user_id');
     const loggedUserTipo = localStorage.getItem('petcareplus_user_tipo') || 'tutor';

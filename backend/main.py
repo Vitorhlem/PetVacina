@@ -11,11 +11,16 @@ models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="PetCare Plus API")
 
+origens_permitidas = [
+    "http://localhost:5500", # Para você testar no seu PC
+    "https://petcarev.netlify.app" # <-- COLOQUE SEU LINK DO NETLIFY AQUI (sem a barra / no final)
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=origens_permitidas,
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["*"], # Permite GET, POST, PUT, DELETE
     allow_headers=["*"],
 )
 
